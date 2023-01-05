@@ -1,0 +1,80 @@
+create table student231(s_id int,s_name varchar(20),s_class int,mark1 int,mark2 int);
+
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ S_ID                                               NUMBER(38)
+ S_NAME                                             VARCHAR2(20)
+ S_CLASS                                            NUMBER(38)
+ MARK1                                              NUMBER(38)
+ MARK2                                              NUMBER(38)
+
+insert into student231 values(1,'A',9,200,100);
+insert into student231 values(2,'B',9,100,150);
+insert into student231 values(3,'C',9,200,80);
+insert into student231 values(4,'D',9,180,120);
+insert into student231 values(5,'E',9,240,150);
+
+      S_ID S_NAME                  S_CLASS      MARK1      MARK2
+---------- -------------------- ---------- ---------- ----------
+         1 A                             9        200        100
+         2 B                             9        100        150
+         3 C                             9        200         80
+         4 D                             9        180        120
+
+
+implicit cursor
+---------------
+declare 
+row_no number;
+begin
+update student231 set mark1=mark1+20,mark2=mark2+20;
+if sql%notfound then
+dbms_output.put_line('No students found');
+elsif sql%found then
+row_no:=sql%rowcount;
+dbms_output.put_line('students found and'||row_no||'student record updated');
+end if;
+end;
+/
+
+output
+------
+students found and4student record updated
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from student231;
+
+      S_ID S_NAME                  S_CLASS      MARK1      MARK2
+---------- -------------------- ---------- ---------- ----------
+         1 A                             9        220        120
+         2 B                             9        120        170
+         3 C                             9        220        100
+         4 D                             9        200        140
+
+
+explicit cursor
+--------------
+declare
+id student231.s_id%type;
+name student231.s_name%type;
+class student231.s_class%type;
+
+cursor stu is select s_id,s_name,s_class from student231;
+begin
+open stu;
+loop
+fetch stu into id,name,class;
+exit when stu%notfound;
+dbms_output.put_line(id||' '||name||' '||class);
+end loop;
+close stu;
+end ;
+/
+
+output
+------
+1 A 9
+2 B 9
+3 C 9
+4 D 9
